@@ -1,9 +1,9 @@
 from django.urls import path
 
-import products.views as products
+from products.views import products
 
-app_name = products
+app_name = 'products'
 
 urlpatterns = [
-    path('', products, name='index')
+    path('', products, name='index'),
 ]
