@@ -9,7 +9,7 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
     <title>{{ title }}</title>
-    <link href="{% static 'css/auth-admin.css' %} rel="stylesheet"/>
+    <link href="{% static 'css/auth-admin.css' %}" rel="stylesheet"/>
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet"
           crossorigin="anonymous"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"
@@ -17,7 +17,7 @@
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="admin.html">GeekShop</a>
+    <a class="navbar-brand" href="{%  url 'admins:index' %}">GeekShop</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i>
     </button>
     <!-- Navbar Search-->
@@ -47,7 +47,7 @@
             <div class="sb-sidenav-menu">
                 <div class="nav">
                     <div class="sb-sidenav-menu-heading">Приложения</div>
-                    <a class="nav-link" href="admin-users-read.html">
+                    <a class="nav-link" href="{% url 'admins:admin_users' %}">
                         <div class="sb-nav-link-icon">
                             <i class="fas fa-users"></i>
                         </div>
