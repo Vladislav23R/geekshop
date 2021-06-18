@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 
 from users.models import User
 from products.models import ProductCategory
-from admins.forms import UserAdminRegisterForm, UserAdminProfileForm
+from admins.forms import UserAdminRegisterForm, UserAdminProfileForm, CategoryProductAdminForm
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -58,6 +58,45 @@ def admin_users_delete(request, id):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def admin_category(request):
+def admin_categories(request):
     context = {'title': 'GeekShop - Админ | Категории', 'categories': ProductCategory.objects.all()}
     return render(request, 'admins/admin-product-category-read.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_categories_create(request):
+    if request.method == 'POST':
+        form = CategoryProductAdminForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('admins:admin_categories'))
+    else:
+        form = CategoryProductAdminForm()
+    context = {'title': 'GeekShop - Админ | Добавление категории', 'form': form}
+    return render(request, 'admins/admin-product-category-create.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_categories_delete(request, id):
+    category = ProductCategory.objects.get(id=id)
+    category.delete()
+    return HttpResponseRedirect(reverse('admins:admin_categories'))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_categories_update(request, id):
+    selected_category = ProductCategory.objects.get(id=id)
+    if request.method == 'POST':
+        form = CategoryProductAdminForm(data=request.POST, instance=selected_category)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('admins:admin_categories'))
+    else:
+        form = CategoryProductAdminForm(instance=selected_category)
+    context = {
+        'title': 'GeekShop - Админ | Обновление категории',
+        'form': form,
+        'selected_category': selected_category,
+    }
+    return render(request, 'admins/admin-product-category-update-delete.html', context)
+
