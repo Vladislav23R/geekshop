@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 
 from users.models import User
+from products.models import ProductCategory
 from admins.forms import UserAdminRegisterForm, UserAdminProfileForm
 
 
@@ -54,3 +55,9 @@ def admin_users_delete(request, id):
     user.is_active = False
     user.save()
     return HttpResponseRedirect(reverse('admins:admin_users'))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_category(request):
+    context = {'title': 'GeekShop - Админ | Категории', 'categories': ProductCategory.objects.all()}
+    return render(request, 'admins/admin-product-category-read.html', context)
