@@ -11,13 +11,9 @@ def index(request):
     return render(request, 'products/index.html', context)
 
 
-def products(request):
-
-    goods = Product.objects.all()
-    categories = ProductCategory.objects.all()
-    context = {
-        'title': 'Products',
-        'products': goods,
-        'categories': categories,
-    }
+def products(request, category_id=None):
+    context = {'title': 'Products', 'categories': ProductCategory.objects.all()}
+    context.update({
+        'products': Product.objects.filter(category_id=category_id) if category_id else Product.objects.all()
+    })
     return render(request, 'products/products.html', context)
