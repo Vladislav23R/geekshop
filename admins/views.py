@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.utils.decorators import method_decorator
 
 from users.models import User
 from products.models import ProductCategory
@@ -14,20 +15,18 @@ def index(request):
     return render(request, 'admins/admin.html')
 
 
-# @user_passes_test(lambda u: u.is_superuser)
-# def admin_users(request):
-#     context = {'title': 'GeekShop - Админ | Пользователи', 'users': User.objects.all()}
-#     return render(request, 'admins/admin-users-read.html', context)
-
-
 class UserListView(ListView):
     model = User
     template_name = 'admins/admin-users-read.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(UserListView,self).get_context_data(**kwargs)
+        context = super(UserListView, self).get_context_data(**kwargs)
         context['title'] = 'GeekShop - Админ | Пользователи'
         return context
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserListView, self).dispatch(request, *args, **kwargs)
 
 
 # @user_passes_test(lambda u: u.is_superuser)
