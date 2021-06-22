@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth, messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView, UpdateView
 
 from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm
@@ -82,8 +82,13 @@ def profile(request):
     return render(request, 'users/profile.html', context)
 
 
-def logout(request):
-    auth.logout(request)
-    return HttpResponseRedirect(reverse('index'))
+# def logout(request):
+#     auth.logout(request)
+#     return HttpResponseRedirect(reverse('index'))
+
+
+class UserLogoutView(LogoutView):
+    next_page = reverse_lazy('index')
+
 
 
