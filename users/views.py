@@ -3,7 +3,7 @@ from django.contrib import auth, messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView
 
 from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm
 from baskets.models import Baskets
