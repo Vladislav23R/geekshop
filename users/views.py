@@ -3,7 +3,7 @@ from django.contrib import auth, messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm
 from baskets.models import Baskets
@@ -65,21 +65,36 @@ class UserRegisterView(CreateView):
         return context
 
 
-@login_required()
-def profile(request):
-    user = request.user
-    if request.method == 'POST':
-        form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('users:profile'))
-    else:
-        form = UserProfileForm(instance=user)
-    context = {
-        'title': 'GeekShop - Личный кабинет',
-        'form': form,
-        'baskets': Baskets.objects.filter(user=user)}
-    return render(request, 'users/profile.html', context)
+# @login_required()
+# def profile(request):
+#     user = request.user
+#     if request.method == 'POST':
+#         form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect(reverse('users:profile'))
+#     else:
+#         form = UserProfileForm(instance=user)
+#     context = {
+#         'title': 'GeekShop - Личный кабинет',
+#         'form': form,
+#         'baskets': Baskets.objects.filter(user=user)}
+#     return render(request, 'users/profile.html', context)
+
+
+class UserProfileView(UpdateView):
+    model = User
+    form_class = UserProfileForm
+    template_name = 'users/profile.html'
+    title = 'GeekShop - Личный кабинет'
+
+    def get_success_url(self):
+        return reverse_lazy('users:profile', args=(self.object.id,))
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileView, self).get_context_data(**kwargs)
+        context['baskets'] = Baskets.objects.filter(user=self.object)
+        return context
 
 
 # def logout(request):
