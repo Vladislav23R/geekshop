@@ -43,35 +43,47 @@ class UserLoginView(LoginView):
         return self.success_url
 
 
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            if send_verify_mail(form):
-                print('сообщение подтверждения отправлено')
-                return HttpResponseRedirect(reverse('users:login'))
-            else:
-                print('ошибка отправки сообщения')
-                return HttpResponseRedirect(reverse('users:login'))
-            messages.success(request, 'Вы успешно зарегистрировались!')
-            return HttpResponseRedirect(reverse('users:login'))
-    else:
-        form = UserRegisterForm()
-    context = {'title': 'GeekShop - Регистрация', 'form': form}
-    return render(request, 'users/register.html', context)
+# def register(request):
+#     if request.method == 'POST':
+#         form = UserRegisterForm(data=request.POST)
+#         if form.is_valid():
+#             form.save()
+#             if send_verify_mail(form):
+#                 print('сообщение подтверждения отправлено')
+#                 return HttpResponseRedirect(reverse('users:login'))
+#             else:
+#                 print('ошибка отправки сообщения')
+#                 return HttpResponseRedirect(reverse('users:login'))
+#             messages.success(request, 'Вы успешно зарегистрировались!')
+#             return HttpResponseRedirect(reverse('users:login'))
+#     else:
+#         form = UserRegisterForm()
+#     context = {'title': 'GeekShop - Регистрация', 'form': form}
+#     return render(request, 'users/register.html', context)
 
 
-# class UserRegisterView(CreateView):
-#     model = User
-#     form_class = UserRegisterForm
-#     template_name = 'users/register.html'
-#     success_url = reverse_lazy('users:login')
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(UserRegisterView, self).get_context_data(**kwargs)
-#         context['title'] = 'GeekShop - Регистрация'
-#         return context
+class UserRegisterView(CreateView):
+    model = User
+    form_class = UserRegisterForm
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('users:login')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserRegisterView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Регистрация'
+        return context
+
+    def form_valid(self, form):
+        if self.request.method == 'POST':
+            form = UserRegisterForm(data=self.request.POST)
+            if form.is_valid():
+                form.save()
+                if send_verify_mail(form):
+                    print('сообщение подтверждения отправлено')
+                    return HttpResponseRedirect(reverse('users:login'))
+                else:
+                    print('ошибка отправки сообщения')
+        return super(UserRegisterView, self).form_valid(form)
 
     # def post(self, request, *args, **kwargs):
     #     # form = UserRegisterForm(request.POST)
