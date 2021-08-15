@@ -8,7 +8,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.conf import settings
 
 import users.views
-from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserProfileEdit
 from baskets.models import Baskets
 from users.models import User
 
@@ -85,48 +85,41 @@ class UserRegisterView(CreateView):
                     print('ошибка отправки сообщения')
         return super(UserRegisterView, self).form_valid(form)
 
-    # def post(self, request, *args, **kwargs):
-    #     # form = UserRegisterForm(request.POST)
-    #     # self.form_class
-    #     if self.form_class(request.POST).is_valid():
-    #         user = self.form_class.save()
-    #         if send_verify_mail(user):
-    #             print('succes')
-    #         else:
-    #             print('sendind falled')
-    #         return super(UserRegisterView, self).form_valid()
+
+@login_required()
+def profile(request, pk):
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
+        profile_form = UserProfileEdit(request.POST, instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('users:profile', args=(user.pk,)))
+    else:
+        form = UserProfileForm(instance=user)
+        profile_form = UserProfileEdit(instance=request.user.userprofile)
+    context = {
+        'title': 'GeekShop - Личный кабинет',
+        'form': form,
+        'profile_form': profile_form,
+        'baskets': Baskets.objects.filter(user=user)
+    }
+    return render(request, 'users/profile.html', context)
 
 
-# @login_required()
-# def profile(request):
-#     user = request.user
-#     if request.method == 'POST':
-#         form = UserProfileForm(data=request.POST, files=request.FILES, instance=user)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponseRedirect(reverse('users:profile'))
-#     else:
-#         form = UserProfileForm(instance=user)
-#     context = {
-#         'title': 'GeekShop - Личный кабинет',
-#         'form': form,
-#         'baskets': Baskets.objects.filter(user=user)}
-#     return render(request, 'users/profile.html', context)
-
-
-class UserProfileView(UpdateView):
-    model = User
-    form_class = UserProfileForm
-    template_name = 'users/profile.html'
-    title = 'GeekShop - Личный кабинет'
-
-    def get_success_url(self):
-        return reverse_lazy('users:profile', args=(self.object.id,))
-
-    def get_context_data(self, **kwargs):
-        context = super(UserProfileView, self).get_context_data(**kwargs)
-        context['baskets'] = Baskets.objects.filter(user=self.object)
-        return context
+# class UserProfileView(UpdateView):
+#     model = User
+#     form_class = UserProfileForm
+#     template_name = 'users/profile.html'
+#     title = 'GeekShop - Личный кабинет'
+#
+#     def get_success_url(self):
+#         return reverse_lazy('users:profile', args=(self.object.id,))
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(UserProfileView, self).get_context_data(**kwargs)
+#         context['baskets'] = Baskets.objects.filter(user=self.object)
+#         return context
 
 
 # def logout(request):

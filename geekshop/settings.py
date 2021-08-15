@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'social_django',
     'products',
     'users',
     'baskets',
@@ -138,7 +139,7 @@ LOGIN_URL = 'users/login/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DOMAIN = 'http://localhost:8000'
+DOMAIN = 'http://localhost:8088'
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = '25'
@@ -150,3 +151,11 @@ EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
 
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # EMAIL_FILE_PATH = 'tmp/email-messages/'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.vk.VKOAuth2',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7925431'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'krAoQCoWMCDsopIsRMwA'
