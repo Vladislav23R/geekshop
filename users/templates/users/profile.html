@@ -16,7 +16,7 @@
                          {% static 'vendor/img/users/default_avatar.jpg' %} {% endif %}"
                          class="img-thumbnail">
                 </div>
-                <form action="{% url 'users:profile' %}" method="post" enctype="multipart/form-data">
+                <form action="{% url 'users:profile' user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-lg-6">
@@ -50,6 +50,20 @@
                             <label class="small mb-1" for="{{ form.email.id_for_label }}">Адрес электронной
                                 почты</label>
                             {{ form.email }}
+                        </div>
+                    </div>
+                     <div class="form-row">
+                        <div class="col-lg-6">
+                            <label class="small mb-1" for="{{ profile_form.tagline.id_for_label }}">Тэг</label>
+                            {{ profile_form.tagline }}
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="small mb-1" for="{{ profile_form.about_me.id_for_label }}">О себе</label>
+                            {{ profile_form.about_me }}
+                        </div>
+                         <div class="col-lg-6">
+                            <label class="small mb-1" for="{{ profile_form.gender.id_for_label }}">Пол</label>
+                            {{ profile_form.gender }}
                         </div>
                     </div>
                     <div class="form-row">
