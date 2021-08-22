@@ -48,11 +48,12 @@ class OrderItemCreate(CreateView):
                 # basket_items.delete()
             else:
                 formset = OrderFormset()
-            data['orderitems'] = formset
+        data['orderitems'] = formset
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
+        print(context['orderitems'])
         orderitems = context['orderitems']
 
         with transaction.atomic():
@@ -103,7 +104,7 @@ class OrderItemUpdate(UpdateView):
             for form in formset.forms:
                 if form.instance.pk:
                     form.initial['price'] = form.instance.product.price
-            data['orderitems'] = formset
+        data['orderitems'] = formset
         return data
 
     def form_valid(self, form):
