@@ -53,7 +53,6 @@ class OrderItemCreate(CreateView):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        print(context['orderitems'])
         orderitems = context['orderitems']
 
         with transaction.atomic():
