@@ -57,19 +57,22 @@ window.onload = function () {
         $('.order_total_quantity').html(order_total_quantity.toString());
     }
 
-    $('.formset_row').formset( {
+    $('.formset_row').formset({
         addText: 'добавить продукт',
-       deleteText: 'удалить',
-       prefix: 'orderitems',
-       removed: deleteOrderItem
+        deleteText: 'удалить',
+        prefix: 'orderitems',
+        removed: deleteOrderItem
 
     });
 
-    function deleteOrderItem(row){
+    function deleteOrderItem(row) {
         var target_name = row[0].querySelector('input[type=number]').name;
         orderitem_num = target_name.replace('orderitems-', '').replace('-quantity', '');
         delta_quantity = -quantity_arr[orderitem_num];
-        orderSummaryUpdate(price_arr[orderitem_num], delta_quantity);
+        quantity_arr[orderitem_num] = 0;
+        if (!isNaN(price_arr[orderitem_num]) && !isNaN(delta_quantity)) {
+            orderSummaryUpdate(price_arr[orderitem_num], delta_quantity);
+        }
     }
 
     $('.order_form').on('change', 'select', function () {
@@ -82,21 +85,28 @@ window.onload = function () {
             success: function (data){
                 if (data.price) {
                     price_arr[orderitem_num] = parseFloat(data.price);
+                    if (isNaN(quantity_arr[orderitem_num])) {
+                        quantity_arr[orderitem_num] = 0;
+                    }
                     var price_html = "<span>" + data.price.toString().replace('.', ',') + "</span> руб";
                     var curr_tr = $('.order_form table').find('tr:eq('+ (orderitem_num + 1) +')');
                     curr_tr.find('td:eq(2)').html(price_html);
+                    if (isNaN(curr_tr.find('input[type="number"]').val())) {
+                        curr_tr.find('input[type="number"]').val(0);
+                    }
                     orderSummaryRecalc();
                 }
             }
         });
     });
 
-    function orderSummaryRecalc(){
-        for (var i=0; i < TOTAL_FORMS; i++) {
-            console.log(quantity_arr[i]);
-            console.log(order_total_quantity);
+
+    function orderSummaryRecalc() {
+        order_total_quantity = 0;
+        order_total_cost = 0;
+
+        for (var i = 0; i < TOTAL_FORMS; i++) {
             order_total_quantity += quantity_arr[i];
-            console.log(order_total_quantity);
             order_total_cost += quantity_arr[i] * price_arr[i];
         }
         $('.order_total_quantity').html(order_total_quantity.toString());
