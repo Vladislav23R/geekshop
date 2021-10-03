@@ -1,6 +1,6 @@
-psycopg2
-pillow
 django
+psycopg2-binary
+pillow
 requests
 django-debug-toolbar
 social_auth_app_django
